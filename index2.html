@@ -1,1 +1,133 @@
-Halo Semuanya
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Dampak Sawit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #e0f7fa;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      text-align: center;
+      width: 90%;
+      max-width: 420px;
+      z-index: 2;
+    }
+
+    .effect {
+      position: fixed;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .flood {
+      bottom: -100%;
+      background: rgba(0,150,255,.7);
+      animation: flood 3s forwards;
+    }
+
+    .landslide {
+      top: -100%;
+      background: linear-gradient(#795548, #5d4037);
+      animation: slide 2.5s forwards;
+    }
+
+    @keyframes flood { to { bottom: 0; } }
+    @keyframes slide { to { top: 0; } }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 20px;
+      background: #d32f2f;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h1>🌍 Dampak Lingkungan</h1>
+  <p id="text"></p>
+  <button onclick="reset()">🔁 Kelola Lebih Bijak</button>
+</div>
+
+<script>
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const sawit = localStorage.getItem("totalSawit") || 0;
+  const text = document.getElementById("text");
+
+  function soundFlood() {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.value = 200;
+
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 2);
+  }
+
+  function soundLandslide() {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = "sawtooth";
+    osc.frequency.value = 80;
+
+    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 2);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 2);
+  }
+
+  if (sawit >= 15) {
+    document.body.insertAdjacentHTML("beforeend",
+      '<div class="effect landslide"></div>');
+    soundLandslide();
+    text.innerText =
+      `Sawit ditanam: ${sawit}\n\n⛰️ TANAH LONGSOR!\nAlam menyerah.`;
+  } else {
+    document.body.insertAdjacentHTML("beforeend",
+      '<div class="effect flood"></div>');
+    soundFlood();
+    text.innerText =
+      `Sawit ditanam: ${sawit}\n\n🌧️ BANJIR!\nAir meluap.`;
+  }
+
+  function reset() {
+    localStorage.clear();
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
+</html>
